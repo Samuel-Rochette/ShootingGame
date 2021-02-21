@@ -1,0 +1,9 @@
+assets
+Debug
+libpng16-16.dll
+SDL2.dll
+SDL2_image.dll
+ShootingGame.vcxproj
+ShootingGame.vcxproj.filters
+ShootingGame.vcxproj.user
+zlib1.dll
