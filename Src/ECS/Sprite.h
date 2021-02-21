@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Components.h"
 #include "SDL.h"
 #include "../TextureManager.h"
 #include "Animation.h"
+#include "../Collision.h"
 #include <map>
 
 class Sprite : public Component
@@ -77,6 +77,7 @@ public:
 
 		destRect.x = (int)position->position.x;
 		destRect.y = (int)position->position.y;
+
 	}
 
 	void draw() override

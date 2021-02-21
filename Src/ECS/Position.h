@@ -2,6 +2,8 @@
 
 #include "Components.h"
 #include "../Vector2D.h"
+#include "Player.h"
+#include "../Collision.h"
 
 class Position : public Component
 {
@@ -29,6 +31,13 @@ public:
 
 		position.x += velocity.x * speed;
 		position.y += velocity.y * speed;
+
+		if (entity->hasComponent<Player>() &&
+			!Collision::isWithin(position, width, height, entity->getComponent<Player>().playArea)
+			)
+		{
+			position = Collision::correctPosition(position, width, height, entity->getComponent<Player>().playArea);
+		}
 	}
 
 };
