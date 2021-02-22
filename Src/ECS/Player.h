@@ -2,7 +2,6 @@
 
 #include "../Game.h"
 #include "ECS.h"
-#include "Components.h"
 
 class Player : public Component
 {
@@ -14,9 +13,9 @@ public:
 	{
 		velocity = &entity->getComponent<Velocity>();
 
-		playArea.x = playArea.y = 64;
-		playArea.h = 512;
-		playArea.w = 351;
+		playArea.x = playArea.y = 32;
+		playArea.h = 576;
+		playArea.w = 512;
 	}
 
 	void update() override

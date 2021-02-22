@@ -1,9 +1,9 @@
 #pragma once
 
-class Frame : public Component
+class Level : public Component
 {
 public:
-	Frame(const char* path)
+	Level(const char* path)
 	{
 		texture = TextureManager::LoadTexture(path);
 	}
@@ -12,12 +12,23 @@ public:
 	{
 		position = &entity->getComponent<Position>();
 
-		srcRect.x = destRect.x = (int)position->position.x;
-		srcRect.y = destRect.y = (int)position->position.y;
+		srcRect.x = srcRect.y = 0;
 		srcRect.w = destRect.w = position->width;
 		srcRect.h = destRect.h = position->height;
+		destRect.x = (int)position->position.x;
+		destRect.y = (int)position->position.y;
 	}
-	
+
+	void update() override
+	{
+		destRect.y = (int)position->position.y;
+
+		if (position->position.y >= 640) {
+			position->position.y = -1920.0f;
+			destRect.y = -1920;
+		}
+	}
+
 	void draw() override
 	{
 		TextureManager::Render(texture, srcRect, destRect);

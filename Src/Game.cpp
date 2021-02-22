@@ -10,6 +10,8 @@ bool Game::isRunning = false;
 
 auto& player(manager.addEntity());
 auto& frame(manager.addEntity());
+auto& level1(manager.addEntity());
+auto& level2(manager.addEntity());
 
 Game::Game()
 {}
@@ -40,18 +42,29 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		isRunning = true;
 
 		player.addComponent<Position>(224.0, 448.0, 32, 64);
-		player.addComponent<Velocity>(4);
-		player.addComponent<Sprite>("assets/wizard.png");
+		player.addComponent<Velocity>(5);
+		player.addComponent<Sprite>("assets/wizard_a.png", true);
+		player.getComponent<Sprite>().addAnimation(0, 5, 50);
 		player.addComponent<Player>();
 		player.addGroup(Layer2);
 
-		//player.getComponent<Velocity>().velocity.x = 1;
-
 		frame.addComponent<Position>(0.0, 0.0, 800, 640);
 		frame.addComponent<Frame>("assets/frame.png");
-		frame.addGroup(Layer1);
+		frame.addGroup(Layer2);
+
+		level1.addComponent<Position>(0.0, -640.0, 576, 1280);
+		level1.addComponent<Velocity>(1, 0.0f, 1.0f);
+		level1.addComponent<Level>("assets/map.png");
+		level1.addGroup(Layer1);
+
+		level2.addComponent<Position>(0.0, -1920.0, 576, 1280);
+		level2.addComponent<Velocity>(1, 0.0f, 1.0f);
+		level2.addComponent<Level>("assets/map.png");
+		level2.addGroup(Layer1);
 	}
 }
+
+auto& layer1(manager.getGroup(Game::Layer1));
 
 void Game::handleEvents()
 {
@@ -70,6 +83,11 @@ void Game::handleEvents()
 void Game::update()
 {
 
+	for (auto& e : layer1)
+	{
+		e->update();
+	}
+
 	player.update();
 
 }
@@ -77,6 +95,11 @@ void Game::update()
 void Game::render()
 {
 	SDL_RenderClear(renderer);
+
+	for (auto& e : layer1)
+	{
+		e->draw();
+	}
 
 	frame.draw();
 	player.draw();

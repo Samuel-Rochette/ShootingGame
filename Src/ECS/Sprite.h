@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "../Collision.h"
 #include <map>
+#include <string>
 
 class Sprite : public Component
 {
@@ -19,11 +20,10 @@ private:
 
 public:
 	int animIndex = 0;
-	std::map<const char*, Animation> animations;
+	std::map<std::string, Animation> animations;
 
 	SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
 
-	Sprite() = default;
 	Sprite(const char* path)
 	{
 		setTex(path);
@@ -31,13 +31,7 @@ public:
 
 	Sprite(const char* path, bool isAnimated)
 	{
-		animated = isAnimated;
-
-		//                  -TODO-
-		// - Accept multiple animation parameters
-		// - Create new animation with Animation <NAME> = Animation(index, frames, speed);
-		// - Add animation to entity with animations.emplace("<NAME>", <NAME>);
-		// - Call play(<NAME>); to set default animation
+		animated = true;
 
 		setTex(path);
 	}
@@ -50,6 +44,15 @@ public:
 	void setTex(const char* path)
 	{
 		texture = TextureManager::LoadTexture(path);
+	}
+
+	void addAnimation(int index, int frames, int speed)
+	{
+		std::string name = "Animation" + std::to_string(index);
+
+		animations[name] = Animation(index, frames, speed);
+
+		play("Animation0");
 	}
 
 	void init() override
@@ -68,7 +71,7 @@ public:
 
 	void update() override
 	{
-		if (animated)
+		if (animated && frames > 0)
 		{
 			srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
 		}
@@ -85,7 +88,7 @@ public:
 		TextureManager::Render(texture, srcRect, destRect);
 	}
 
-	void play(const char* animName)
+	void play(std::string animName)
 	{
 		frames = animations[animName].frames;
 		animIndex = animations[animName].index;

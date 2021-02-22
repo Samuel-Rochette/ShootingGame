@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Components.h"
 #include "../Vector2D.h"
 #include "Player.h"
 #include "../Collision.h"
@@ -38,6 +37,7 @@ public:
 		{
 			position = Collision::correctPosition(position, width, height, entity->getComponent<Player>().playArea);
 		}
+
 	}
 
 };

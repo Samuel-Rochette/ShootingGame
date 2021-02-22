@@ -46,6 +46,11 @@ class Component
 public:
 	Entity* entity;
 
+	Component()
+	{
+		entity = nullptr;
+	}
+
 	virtual void init() {}
 	virtual void update() {}
 	virtual void draw() {}
@@ -66,7 +71,10 @@ private:
 	GroupBitSet groupBitSet;
 
 public:
-	Entity(Manager& mManager) : manager(mManager) {}
+	Entity(Manager& mManager) : manager(mManager)
+	{
+		//componentArray = [];
+	}
 
 	// Iterate through all the components that belong the
 	// Entity instance and invoke its update method

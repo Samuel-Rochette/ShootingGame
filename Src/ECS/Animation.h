@@ -7,7 +7,13 @@ struct Animation
 	int frames;
 	int speed;
 
-	Animation() {}
+	Animation() {
+
+		index = 0;
+		frames = 3;
+		speed = 100;
+	}
+
 	Animation(int i, int f, int s)
 	{
 		index = i;
