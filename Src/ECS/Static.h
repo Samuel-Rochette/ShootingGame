@@ -1,9 +1,9 @@
 #pragma once
 
-class Frame : public Component
+class Static : public Component
 {
 public:
-	Frame(const char* path)
+	Static(const char* path)
 	{
 		texture = TextureManager::LoadTexture(path);
 	}

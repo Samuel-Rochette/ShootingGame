@@ -2,6 +2,7 @@
 
 #include "SDL.h"
 #include "SDL_image.h"
+#include "SDL_ttf.h"
 #include <iostream>
 
 class Game
@@ -17,6 +18,8 @@ public:
 	bool running() { return isRunning; }
 	void render();
 	void clean();
+	void changeScene(int sceneNum);
+	void removeEntities();
 
 	static SDL_Renderer *renderer;
 	static SDL_Event event;

@@ -25,11 +25,14 @@ public:
 
 	void update() override
 	{
-		velocity = entity->getComponent<Velocity>().velocity;
-		speed = entity->getComponent<Velocity>().speed;
+		if (entity->hasComponent<Velocity>())
+		{
+			velocity = entity->getComponent<Velocity>().velocity;
+			speed = entity->getComponent<Velocity>().speed;
 
-		position.x += velocity.x * speed;
-		position.y += velocity.y * speed;
+			position.x += velocity.x * speed;
+			position.y += velocity.y * speed;
+		}
 
 		if (entity->hasComponent<Player>() &&
 			!Collision::isWithin(position, width, height, entity->getComponent<Player>().playArea)
@@ -37,6 +40,7 @@ public:
 		{
 			position = Collision::correctPosition(position, width, height, entity->getComponent<Player>().playArea);
 		}
+
 
 	}
 

@@ -3,6 +3,7 @@
 #include "Velocity.h"
 #include "Position.h"
 #include "Sprite.h"
-#include "Frame.h"
+#include "Static.h"
 #include "Player.h"
 #include "Level.h"
+#include "Text.h"
