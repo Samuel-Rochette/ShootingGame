@@ -7,6 +7,7 @@ SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 
 bool Game::isRunning = false;
+Vector2D Game::mouse;
 
 Game::Game()
 {}
@@ -38,8 +39,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
 		isRunning = true;
 
-
-		changeScene(0);
+		changeScene(1 );
 
 	}
 }
@@ -55,6 +55,10 @@ void Game::handleEvents()
 	{
 	case SDL_QUIT:
 		isRunning = false;
+		break;
+	case SDL_MOUSEMOTION:
+		Game::mouse.x = event.motion.x;
+		Game::mouse.y = event.motion.y;
 		break;
 	default:
 		break;
@@ -106,6 +110,10 @@ void Game::changeScene(int sceneNum)
 	{
 	case 0:
 	{
+		isRunning = false;
+	}
+	case 1:
+	{
 		removeEntities();
 
 		auto& menu(manager.addEntity());
@@ -117,16 +125,16 @@ void Game::changeScene(int sceneNum)
 		menu.addGroup(Layer1);
 
 		gameStart.addComponent<Position>(550.0, 300.0, 95, 112);
-		gameStart.addComponent<Text>("Start");
+		gameStart.addComponent<Text>("Start", 72, 2);
 		gameStart.addGroup(Layer2);
 
 		quit.addComponent<Position>(550.0, 400.0, 76, 112);
-		quit.addComponent<Text>("Quit");
+		quit.addComponent<Text>("Quit", 72, 0);
 		quit.addGroup(Layer2);
 
 		break;
 	}
-	case 1:
+	case 2:
 	{
 		removeEntities();
 
@@ -173,4 +181,6 @@ void Game::removeEntities()
 	{
 		e->destroy();
 	}
+
+	manager.refresh();
 }

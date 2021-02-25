@@ -35,8 +35,7 @@ public:
 		}
 
 		if (entity->hasComponent<Player>() &&
-			!Collision::isWithin(position, width, height, entity->getComponent<Player>().playArea)
-			)
+			!Collision::isWithin(position, width, height, entity->getComponent<Player>().playArea))
 		{
 			position = Collision::correctPosition(position, width, height, entity->getComponent<Player>().playArea);
 		}

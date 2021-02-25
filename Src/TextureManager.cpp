@@ -9,10 +9,10 @@ SDL_Texture* TextureManager::LoadTexture(const char* path)
 	return tex;
 }
 
-SDL_Texture* TextureManager::LoadText(const char* message)
+SDL_Texture* TextureManager::LoadText(const char* message, int fontSize)
 {
 	SDL_Color color = { 0, 0, 0 };
-	TTF_Font* font = TTF_OpenFont("assets/achafont.ttf", 72);
+	TTF_Font* font = TTF_OpenFont("assets/achafont.ttf", fontSize);
 
 	SDL_Surface* tempSurface = TTF_RenderText_Solid(font, message, color);
 	SDL_Texture* text = SDL_CreateTextureFromSurface(Game::renderer, tempSurface);

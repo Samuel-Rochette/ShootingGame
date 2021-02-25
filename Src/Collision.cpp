@@ -20,10 +20,10 @@ bool Collision::aabb(const SDL_Rect& rectA, const SDL_Rect& rectB)
 bool Collision::isWithin(Vector2D position, int w, int h, const SDL_Rect& rectB)
 {
 	if (
-		position.x <= rectB.x &&
-		position.y <= rectB.y &&
-		position.x + w >= rectB.x + rectB.w &&
-		position.y + h >= rectB.y + rectB.h
+		position.x >= rectB.x &&
+		position.y >= rectB.y &&
+		position.x + w <= rectB.x + rectB.w &&
+		position.y + h <= rectB.y + rectB.h
 		)
 	{
 		return true;
