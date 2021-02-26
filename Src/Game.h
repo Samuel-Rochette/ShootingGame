@@ -25,15 +25,16 @@ public:
 
 	static SDL_Renderer *renderer;
 	static SDL_Event event;
-	static bool isRunning;
-
 	static Vector2D mouse;
+	static bool isRunning;
+	static bool isPaused;
 
 	enum groupLabels : std::size_t
 	{
 		Layer1,
 		Layer2,
-		Layer3
+		Layer3,
+		Paused
 	};
 
 

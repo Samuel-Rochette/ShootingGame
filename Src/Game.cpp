@@ -7,6 +7,7 @@ SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 
 bool Game::isRunning = false;
+bool Game::isPaused = false;
 Vector2D Game::mouse;
 
 Game::Game()
@@ -39,13 +40,14 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
 		isRunning = true;
 
-		changeScene(1 );
+		changeScene(2);
 
 	}
 }
 
 auto& layer1(manager.getGroup(Game::Layer1));
 auto& layer2(manager.getGroup(Game::Layer2));
+auto& paused(manager.getGroup(Game::Paused));
 
 void Game::handleEvents()
 {
@@ -68,15 +70,22 @@ void Game::handleEvents()
 void Game::update()
 {
 
-	for (auto& e : layer1)
-	{
-		e->update();
+	if (!isPaused) {
+		for (auto& e : layer1)
+		{
+			e->update();
+		}
+		for (auto& e : layer2)
+		{
+			e->update();
+		}
 	}
-	for (auto& e : layer2)
-	{
-		e->update();
+	else {
+		for (auto& e : paused)
+		{
+			e->update();
+		}
 	}
-
 }
 
 void Game::render()
@@ -90,6 +99,14 @@ void Game::render()
 	for (auto& e : layer2)
 	{
 		e->draw();
+	}
+
+	if (isPaused)
+	{
+		for (auto& e : paused)
+		{
+			e->draw();
+		}
 	}
 
 	SDL_RenderPresent(renderer);
@@ -111,10 +128,17 @@ void Game::changeScene(int sceneNum)
 	case 0:
 	{
 		isRunning = false;
+		break;
 	}
 	case 1:
 	{
+		isPaused = false;
+		break;
+	}
+	case 2:
+	{
 		removeEntities();
+		isPaused = false;
 
 		auto& menu(manager.addEntity());
 		auto& gameStart(manager.addEntity());
@@ -125,7 +149,7 @@ void Game::changeScene(int sceneNum)
 		menu.addGroup(Layer1);
 
 		gameStart.addComponent<Position>(550.0, 300.0, 95, 112);
-		gameStart.addComponent<Text>("Start", 72, 2);
+		gameStart.addComponent<Text>("Start", 72, 3);
 		gameStart.addGroup(Layer2);
 
 		quit.addComponent<Position>(550.0, 400.0, 76, 112);
@@ -134,7 +158,7 @@ void Game::changeScene(int sceneNum)
 
 		break;
 	}
-	case 2:
+	case 3:
 	{
 		removeEntities();
 
@@ -142,8 +166,11 @@ void Game::changeScene(int sceneNum)
 		auto& frame(manager.addEntity());
 		auto& level1(manager.addEntity());
 		auto& level2(manager.addEntity());
+		auto& pauseScreen(manager.addEntity());
+		auto& resumeGame(manager.addEntity());
+		auto& exitGame(manager.addEntity());
 
-		player.addComponent<Position>(224.0, 448.0, 32, 64);
+		player.addComponent<Position>(272.0, 448.0, 32, 64);
 		player.addComponent<Velocity>(5);
 		player.addComponent<Sprite>("assets/wizard_a.png", true);
 		player.getComponent<Sprite>().addAnimation(0, 5, 100);
@@ -164,6 +191,14 @@ void Game::changeScene(int sceneNum)
 		level2.addComponent<Level>("assets/map.png");
 		level2.addGroup(Layer1);
 
+		resumeGame.addComponent<Position>(231.0, 96.0, 114, 112);
+		resumeGame.addComponent<Text>("Resume", 72, 1);
+		resumeGame.addGroup(Paused);
+
+		resumeGame.addComponent<Position>(256.0, 196.0, 76, 112);
+		resumeGame.addComponent<Text>("Exit", 72, 2);
+		resumeGame.addGroup(Paused);
+
 		break;
 	}
 	default:
@@ -181,6 +216,9 @@ void Game::removeEntities()
 	{
 		e->destroy();
 	}
-
+	for (auto& e : paused)
+	{
+		e->destroy();
+	}
 	manager.refresh();
 }

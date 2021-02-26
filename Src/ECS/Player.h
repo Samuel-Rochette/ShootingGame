@@ -67,6 +67,11 @@ public:
 			velocity->velocity.y = 0;
 			velocity->velocity.x = 0;
 		}
+
+		if (state[SDL_SCANCODE_ESCAPE])
+		{
+			Game::isPaused = true;
+		}
 	}
 
 private:
