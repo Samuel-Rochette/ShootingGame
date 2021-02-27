@@ -4,7 +4,11 @@
 #include "SDL_image.h"
 #include "SDL_ttf.h"
 #include "Vector2D.h"
+#include "rapidxml.hpp"
+
 #include <iostream>
+#include <fstream>
+#include <vector>
 
 class Game
 {
@@ -34,6 +38,7 @@ public:
 		Layer1,
 		Layer2,
 		Layer3,
+		Layer4,
 		Paused
 	};
 

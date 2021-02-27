@@ -1,6 +1,9 @@
 #include "Game.h"
 #include "ECS/Components.h"
 
+using namespace rapidxml;
+using namespace std;
+
 Manager manager;
 
 SDL_Renderer* Game::renderer = nullptr;
@@ -9,6 +12,8 @@ SDL_Event Game::event;
 bool Game::isRunning = false;
 bool Game::isPaused = false;
 Vector2D Game::mouse;
+xml_document<> doc;
+xml_node<>* root_node = NULL;
 
 Game::Game()
 {}
@@ -47,6 +52,8 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
 auto& layer1(manager.getGroup(Game::Layer1));
 auto& layer2(manager.getGroup(Game::Layer2));
+auto& layer3(manager.getGroup(Game::Layer3));
+auto& layer4(manager.getGroup(Game::Layer4));
 auto& paused(manager.getGroup(Game::Paused));
 
 void Game::handleEvents()
@@ -79,6 +86,14 @@ void Game::update()
 		{
 			e->update();
 		}
+		for (auto& e : layer3)
+		{
+			e->update();
+		}
+		for (auto& e : layer4)
+		{
+			e->update();
+		}
 	}
 	else {
 		for (auto& e : paused)
@@ -97,6 +112,14 @@ void Game::render()
 		e->draw();
 	}
 	for (auto& e : layer2)
+	{
+		e->draw();
+	}
+	for (auto& e : layer3)
+	{
+		e->draw();
+	}
+	for (auto& e : layer4)
 	{
 		e->draw();
 	}
@@ -166,7 +189,6 @@ void Game::changeScene(int sceneNum)
 		auto& frame(manager.addEntity());
 		auto& level1(manager.addEntity());
 		auto& level2(manager.addEntity());
-		auto& pauseScreen(manager.addEntity());
 		auto& resumeGame(manager.addEntity());
 		auto& exitGame(manager.addEntity());
 
@@ -179,7 +201,7 @@ void Game::changeScene(int sceneNum)
 
 		frame.addComponent<Position>(0.0, 0.0, 800, 640);
 		frame.addComponent<Static>("assets/frame.png");
-		frame.addGroup(Layer2);
+		frame.addGroup(Layer4);
 
 		level1.addComponent<Position>(0.0, -640.0, 576, 1280);
 		level1.addComponent<Velocity>(1, 0.0f, 1.0f);
@@ -199,6 +221,40 @@ void Game::changeScene(int sceneNum)
 		resumeGame.addComponent<Text>("Exit", 72, 2);
 		resumeGame.addGroup(Paused);
 
+		std::cout << "Parsing script data" << std::endl;
+
+		// Read the file
+		std::ifstream file ("XML/sample.xml");
+		std::vector<char> buffer((std::istreambuf_iterator<char>(file)),
+			std::istreambuf_iterator<char>());
+		buffer.push_back('\0');
+
+		// Parse the buffer
+		doc.parse<0>(&buffer[0]);
+
+		// Find out the root node
+		root_node = doc.first_node("Script");
+
+		// Iterate over the Script nodes
+		for (xml_node<>* minion_node = root_node->first_node(0);
+			minion_node; minion_node = minion_node->next_sibling())
+		{
+			float xPos = std::atof(minion_node->first_node("xPos")->value());
+			float yPos = std::atof(minion_node->first_node("yPos")->value());
+			int width = std::atoi(minion_node->first_node("width")->value());
+			int height = std::atoi(minion_node->first_node("height")->value());
+			int speed = std::atoi(minion_node->first_node("speed")->value());
+			const char* path = minion_node->first_node("sprite")->value();
+
+			auto& minion(manager.addEntity());
+
+			minion.addComponent<Position>(xPos, yPos, width, height);
+			minion.addComponent<Velocity>(speed, 0.0, 1.0);
+			minion.addComponent<Sprite>(path);
+
+			minion.addGroup(Layer3);
+		}
+
 		break;
 	}
 	default:
@@ -213,6 +269,14 @@ void Game::removeEntities()
 		e->destroy();
 	}
 	for (auto& e : layer2)
+	{
+		e->destroy();
+	}
+	for (auto& e : layer3)
+	{
+		e->destroy();
+	}
+	for (auto& e : layer4)
 	{
 		e->destroy();
 	}
