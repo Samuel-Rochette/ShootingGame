@@ -4,6 +4,7 @@
 #include "SDL_image.h"
 #include "SDL_ttf.h"
 #include "Vector2D.h"
+//#include "ScriptManager.h"
 #include "rapidxml.hpp"
 
 #include <iostream>
@@ -32,6 +33,7 @@ public:
 	static Vector2D mouse;
 	static bool isRunning;
 	static bool isPaused;
+	static int frames;
 
 	enum groupLabels : std::size_t
 	{

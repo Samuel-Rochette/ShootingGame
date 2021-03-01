@@ -13,7 +13,6 @@ public:
 
 	int height;
 	int width;
-	int speed;
 
 	Position(float x, float y, int w, int h)
 	{
@@ -28,10 +27,9 @@ public:
 		if (entity->hasComponent<Velocity>())
 		{
 			velocity = entity->getComponent<Velocity>().velocity;
-			speed = entity->getComponent<Velocity>().speed;
 
-			position.x += velocity.x * speed;
-			position.y += velocity.y * speed;
+			position.x += velocity.x;
+			position.y += velocity.y;
 		}
 
 		if (entity->hasComponent<Player>() &&

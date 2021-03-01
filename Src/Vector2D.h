@@ -7,6 +7,9 @@ class Vector2D
 public:
 	float x;
 	float y;
+	float ang;
+	float crv;
+	int end;
 
 	Vector2D();
 	Vector2D(float x, float y);

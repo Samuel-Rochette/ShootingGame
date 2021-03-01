@@ -4,12 +4,17 @@ Vector2D::Vector2D()
 {
 	x = 0.0f;
 	y = 0.0f;
+	ang = 0.0f;
+	crv = 0.0f;
+	end = 0;
 }
 
 Vector2D::Vector2D(float x, float y)
 {
 	this->x = x;
 	this->y = y;
+	this->ang = 0.0;
+	this->crv = 0.0;
 }
 
 Vector2D& Vector2D::add(const Vector2D& vec)

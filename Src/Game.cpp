@@ -5,12 +5,14 @@ using namespace rapidxml;
 using namespace std;
 
 Manager manager;
+//ScriptManager* script;
 
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 
 bool Game::isRunning = false;
 bool Game::isPaused = false;
+int Game::frames = 0;
 Vector2D Game::mouse;
 xml_document<> doc;
 xml_node<>* root_node = NULL;
@@ -76,8 +78,11 @@ void Game::handleEvents()
 
 void Game::update()
 {
-
 	if (!isPaused) {
+		frames += 1;
+
+		std::cout << frames << "\n";
+
 		for (auto& e : layer1)
 		{
 			e->update();
@@ -162,6 +167,7 @@ void Game::changeScene(int sceneNum)
 	{
 		removeEntities();
 		isPaused = false;
+		frames = 0;
 
 		auto& menu(manager.addEntity());
 		auto& gameStart(manager.addEntity());
@@ -184,6 +190,7 @@ void Game::changeScene(int sceneNum)
 	case 3:
 	{
 		removeEntities();
+		frames = 0;
 
 		auto& player(manager.addEntity());
 		auto& frame(manager.addEntity());
@@ -193,7 +200,7 @@ void Game::changeScene(int sceneNum)
 		auto& exitGame(manager.addEntity());
 
 		player.addComponent<Position>(272.0, 448.0, 32, 64);
-		player.addComponent<Velocity>(5);
+		player.addComponent<Velocity>();
 		player.addComponent<Sprite>("assets/wizard_a.png", true);
 		player.getComponent<Sprite>().addAnimation(0, 5, 100);
 		player.addComponent<Player>();
@@ -204,12 +211,12 @@ void Game::changeScene(int sceneNum)
 		frame.addGroup(Layer4);
 
 		level1.addComponent<Position>(0.0, -640.0, 576, 1280);
-		level1.addComponent<Velocity>(1, 0.0f, 1.0f);
+		level1.addComponent<Velocity>(0.0, 1.0);
 		level1.addComponent<Level>("assets/map.png");
 		level1.addGroup(Layer1);
 
 		level2.addComponent<Position>(0.0, -1920.0, 576, 1280);
-		level2.addComponent<Velocity>(1, 0.0f, 1.0f);
+		level2.addComponent<Velocity>(0.0, 1.0);
 		level2.addComponent<Level>("assets/map.png");
 		level2.addGroup(Layer1);
 
@@ -221,10 +228,8 @@ void Game::changeScene(int sceneNum)
 		resumeGame.addComponent<Text>("Exit", 72, 2);
 		resumeGame.addGroup(Paused);
 
-		std::cout << "Parsing script data" << std::endl;
-
 		// Read the file
-		std::ifstream file ("XML/sample.xml");
+		std::ifstream file ("XML/sample2.xml");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(file)),
 			std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
@@ -236,23 +241,44 @@ void Game::changeScene(int sceneNum)
 		root_node = doc.first_node("Script");
 
 		// Iterate over the Script nodes
-		for (xml_node<>* minion_node = root_node->first_node(0);
+		for (xml_node<>* minion_node = root_node->first_node("Wave");
 			minion_node; minion_node = minion_node->next_sibling())
 		{
+			int num = std::atof(minion_node->first_node("num")->value());
 			float xPos = std::atof(minion_node->first_node("xPos")->value());
 			float yPos = std::atof(minion_node->first_node("yPos")->value());
 			int width = std::atoi(minion_node->first_node("width")->value());
 			int height = std::atoi(minion_node->first_node("height")->value());
-			int speed = std::atoi(minion_node->first_node("speed")->value());
 			const char* path = minion_node->first_node("sprite")->value();
 
-			auto& minion(manager.addEntity());
+			for (int i = 0; i < num; i++)
+			{
+				auto& minion(manager.addEntity());
 
-			minion.addComponent<Position>(xPos, yPos, width, height);
-			minion.addComponent<Velocity>(speed, 0.0, 1.0);
-			minion.addComponent<Sprite>(path);
+				minion.addComponent<Position>(xPos, yPos, width, height);
+				minion.addComponent<Velocity>();
+				minion.addComponent<Minion>();
+				minion.addComponent<Sprite>(path);
 
-			minion.addGroup(Layer3);
+				for (xml_node<>* action_node = minion_node->first_node("vector");
+					action_node; action_node = action_node->next_sibling())
+				{
+					int key = std::atof(action_node->first_node("key")->value());
+					int end = std::atof(action_node->first_node("end")->value());
+					int dstart = std::atof(action_node->first_node("dstart")->value());
+					int dstop = std::atof(action_node->first_node("dstop")->value());
+					float vecX = std::atof(action_node->first_node("vectorX")->value());
+					float vecY = std::atof(action_node->first_node("vectorY")->value());
+					float angle = std::atof(action_node->first_node("angle")->value());
+					float curve = std::atof(action_node->first_node("curve")->value());
+
+
+					minion.getComponent<Minion>().addInstruction(key + (i * dstart), end + (i * dstop), vecX, vecY, angle, curve);
+
+				}
+
+				minion.addGroup(Layer3);
+			}
 		}
 
 		break;

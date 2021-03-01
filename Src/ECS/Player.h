@@ -6,8 +6,13 @@
 class Player : public Component
 {
 public:
+
 	Velocity* velocity;
 	SDL_Rect playArea;
+
+	float vecX;
+	float vecY;
+	float speed;
 
 	void init() override
 	{
@@ -16,62 +21,76 @@ public:
 		playArea.x = playArea.y = 32;
 		playArea.h = 576;
 		playArea.w = 512;
+
+		vecX = 0.0;
+		vecY = 0.0;
+		speed = 0.0;
 	}
 
 	void update() override
 	{
 		state = SDL_GetKeyboardState(NULL);
+		speed = 0.0;
 
-		if (state[SDL_SCANCODE_W] && state[SDL_SCANCODE_D])
+		if (state[SDL_SCANCODE_UP] && state[SDL_SCANCODE_RIGHT])
 		{
-			velocity->velocity.y = -0.707f;
-			velocity->velocity.x = 0.707f;
+			speed = 5.0;
+			vecX = 0.707;
+			vecY = -0.707;
 		}
-		else if (state[SDL_SCANCODE_W] && state[SDL_SCANCODE_A])
+		else if (state[SDL_SCANCODE_UP] && state[SDL_SCANCODE_LEFT])
 		{
-			velocity->velocity.y = -0.707f;
-			velocity->velocity.x = -0.707f;
+			speed = 5.0;
+			vecX = -0.707;
+			vecY = -0.707;
 		}
-		else if (state[SDL_SCANCODE_S] && state[SDL_SCANCODE_A])
+		else if (state[SDL_SCANCODE_DOWN] && state[SDL_SCANCODE_LEFT])
 		{
-			velocity->velocity.y = 0.707f;
-			velocity->velocity.x = -0.707f;
+			speed = 5.0;
+			vecX = -0.707;
+			vecY = 0.707;
 		}
-		else if (state[SDL_SCANCODE_S] && state[SDL_SCANCODE_D])
+		else if (state[SDL_SCANCODE_DOWN] && state[SDL_SCANCODE_RIGHT])
 		{
-			velocity->velocity.y = 0.707f;
-			velocity->velocity.x = 0.707f;
+			speed = 5.0;
+			vecX = 0.707;
+			vecY = 0.707;
 		}
-		else if (state[SDL_SCANCODE_W])
+		else if (state[SDL_SCANCODE_UP])
 		{
-			velocity->velocity.y = -1;
-			velocity->velocity.x = 0;
+			speed = 5.0;
+			vecX = 0.0;
+			vecY = -1.0;
 		}
-		else if (state[SDL_SCANCODE_A])
+		else if (state[SDL_SCANCODE_LEFT])
 		{
-			velocity->velocity.y = 0;
-			velocity->velocity.x = -1;
+			speed = 5.0;
+			vecX = -1.0;
+			vecY = 0;
 		}
-		else if (state[SDL_SCANCODE_S])
+		else if (state[SDL_SCANCODE_DOWN])
 		{
-			velocity->velocity.y = 1;
-			velocity->velocity.x = 0;
+			speed = 5.0;
+			vecX = 0.0;
+			vecY = 1.0;
 		}
-		else if (state[SDL_SCANCODE_D])
+		else if (state[SDL_SCANCODE_RIGHT])
 		{
-			velocity->velocity.y = 0;
-			velocity->velocity.x = 1;
+			speed = 5.0;
+			vecX = 1.0;
+			vecY = 0.0;
 		}
 		else
 		{
-			velocity->velocity.y = 0;
-			velocity->velocity.x = 0;
+			speed = 0;
 		}
 
 		if (state[SDL_SCANCODE_ESCAPE])
 		{
 			Game::isPaused = true;
 		}
+
+		velocity->setVelocity(vecX * speed, vecY * speed);
 	}
 
 private:
